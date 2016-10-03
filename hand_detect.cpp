@@ -241,9 +241,6 @@ void hand_detect::meanshift_init() {
         this->frame.copyTo(img);
         cvtColor(image, hsv, COLOR_BGR2HSV);
         back_ground(this->frame);
-        track_hand();
-        Mat roi(img,hand_region);
-        imshow("roi",roi);
         imshow("CamShift Demo", image);
         imshow("Histogram", histimg);
         waitKey(25);
