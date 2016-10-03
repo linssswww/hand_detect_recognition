@@ -120,7 +120,6 @@ void hand_detect::get_init_pt() {
 Mat background;
 void hand_detect::back_ground(Mat frame) {
     Mat foreground;
-
     mog(frame,foreground,0.000015);
     erode(foreground, foreground, cv::Mat());
     dilate(foreground, foreground, cv::Mat());
@@ -241,18 +240,10 @@ void hand_detect::meanshift_init() {
         this->frame.copyTo(image);
         this->frame.copyTo(img);
         cvtColor(image, hsv, COLOR_BGR2HSV);
-        if (trackObject) {
-            pre_deal();
-            if (trackObject < 0) {
-                get_roi();
-                get_histogram();
-                get_init_pt();
-            }
-            back_ground(this->frame);
-            track_hand();
-            Mat roi(img,hand_region);
-            imshow("roi",roi);
-        }
+        back_ground(this->frame);
+        track_hand();
+        Mat roi(img,hand_region);
+        imshow("roi",roi);
         imshow("CamShift Demo", image);
         imshow("Histogram", histimg);
         waitKey(25);
