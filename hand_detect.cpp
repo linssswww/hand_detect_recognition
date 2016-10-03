@@ -121,7 +121,7 @@ Mat background;
 void hand_detect::back_ground(Mat frame) {
     Mat foreground;
 
-    mog(frame,foreground,0.00015);
+    mog(frame,foreground,0.000015);
     erode(foreground, foreground, cv::Mat());
     dilate(foreground, foreground, cv::Mat());
     mog.getBackgroundImage(background);
@@ -131,7 +131,6 @@ void hand_detect::back_ground(Mat frame) {
         imshow("background",background);
     }
 }
-
 void hand_detect::track_hand() {
 
     calcBackProject(&hue, 1, 0, hist, backproj, &phranges);
@@ -158,7 +157,6 @@ void hand_detect::track_hand() {
     if(hand_region.y<0)
         hand_region.y=0;
     Point left_up(hand_region.x,hand_region.y);
-
     if((left_up.x+hand_region.width)>=image.cols)
     {
         hand_region.width=image.cols-hand_region.x;
@@ -202,7 +200,7 @@ void hand_detect::reduce_minArea(Mat &frame) {
     vector<vector<Point>>contours;
     Mat o=Mat::zeros(frame.rows,frame.cols,CV_8UC1);
     findContours(frame,contour,CV_RETR_EXTERNAL ,CV_CHAIN_APPROX_NONE);
-    drawContours(o,contours,-1,Scalar(255,100,100),5,8);
+    drawContours(o,contour,-1,Scalar(255),5,8);
     imshow("0",o);
     int i=0;
     while(i<contour.size())
@@ -215,9 +213,6 @@ void hand_detect::reduce_minArea(Mat &frame) {
         }
                 i++;
     }
-
-
-
     Mat out=Mat::zeros(frame.rows,frame.cols,CV_8UC1);
     drawContours(out,contours,-1,Scalar(255,100,100),5,8);
     if(contours.size()==1)
@@ -238,19 +233,11 @@ void hand_detect::meanshift_init() {
     int number=0;
     while(1) {
         cap>>frame;
-        medianBlur(frame,frame,5);
         frame.copyTo(this->frame);
         if(frame.empty())
         {
             continue;
         }
-        Mat color=detect_by_color(this->frame);
-
-        reduce_minArea(color);
-        he->get_convexHull(color);
-        he->condense_frame(color);
-//        printf("working");
-
         this->frame.copyTo(image);
         this->frame.copyTo(img);
         cvtColor(image, hsv, COLOR_BGR2HSV);
@@ -265,8 +252,6 @@ void hand_detect::meanshift_init() {
             track_hand();
             Mat roi(img,hand_region);
             imshow("roi",roi);
-            he->extract_contour(roi);
-
         }
         imshow("CamShift Demo", image);
         imshow("Histogram", histimg);
